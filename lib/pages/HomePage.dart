@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:hschool/components/portal_button.dart';
 import 'package:hschool/utils/connectionStatusSingleton.dart';
 
 class HomePage extends StatefulWidget {
@@ -61,34 +62,19 @@ class _HomeState extends State<HomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            RaisedButton(
-              child: Text(
-                "New Application",
-                style: TextStyle(fontSize: 20.0),
-              ),
-              onPressed: () {},
-              padding: EdgeInsets.all(10),
-              elevation: 5.2,
+            new Button(
+              text: "New Application",
+              callback: () {},
             ),
             const SizedBox(height: 30),
-            RaisedButton(
-              child: Text(
-                "Students Portal",
-                style: TextStyle(fontSize: 20.0),
-              ),
-              onPressed: () {},
-              padding: EdgeInsets.all(10),
-              elevation: 5.2,
+            new Button(
+              text: "Students Portal",
+              callback: () {},
             ),
             const SizedBox(height: 30),
-            RaisedButton(
-              child: Text(
-                "Lecturers Portal",
-                style: TextStyle(fontSize: 20.0),
-              ),
-              onPressed: () {},
-              padding: EdgeInsets.all(10),
-              elevation: 5.2,
+            new Button(
+              text: "Lecturers Portal",
+              callback: () {},
             ),
           ],
         ),
