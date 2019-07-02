@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hschool/pages/HomePage.dart';
+import 'package:hschool/pages/LecturerLoginPage.dart';
+import 'package:hschool/pages/StudentLoginPage.dart';
 
 final routes = {
   HomePage.routeName : (BuildContext context) => new HomePage(),
+  StudentLoginPage.routeName : (BuildContext context) => new StudentLoginPage(),
+  LecturerLoginPage.routeName : (BuildContext context) => new LecturerLoginPage(),
 };

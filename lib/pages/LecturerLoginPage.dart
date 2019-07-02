@@ -4,23 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hschool/components/portal_button.dart';
-import 'package:hschool/pages/LecturerLoginPage.dart';
-import 'package:hschool/pages/StudentLoginPage.dart';
-import 'package:hschool/routes.dart';
 import 'package:hschool/utils/connectionStatusSingleton.dart';
 
-class HomePage extends StatefulWidget {
-  static final String routeName = 'home';
-
-  const HomePage({Key key, this.title}) : super(key: key);
-
-  final String title;
+class LecturerLoginPage extends StatefulWidget {
+  static final String routeName = 'lecturerLogin';
 
   @override
-  State<StatefulWidget> createState() => _HomeState();
+  State<StatefulWidget> createState() => _LecturerLoginPageState();
 }
 
-class _HomeState extends State<HomePage> {
+class _LecturerLoginPageState extends State<LecturerLoginPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   StreamSubscription _connectionChangeStream;
   bool isOffline = false;
@@ -30,7 +23,7 @@ class _HomeState extends State<HomePage> {
     super.initState();
 
     ConnectionStatusSingleton connectionStatus =
-        ConnectionStatusSingleton.getInstance();
+    ConnectionStatusSingleton.getInstance();
     _connectionChangeStream =
         connectionStatus.connectionChange.listen(connectionChanged);
   }
@@ -41,6 +34,49 @@ class _HomeState extends State<HomePage> {
     });
   }
 
+  final logo = Hero(
+    tag: 'hero',
+    child: CircleAvatar(
+      backgroundColor: Colors.transparent,
+      radius: 48.0,
+      child: Image.asset('assets/images/logo.png'),
+    ),
+  );
+
+  final email = TextFormField(
+    keyboardType: TextInputType.emailAddress,
+    autofocus: true,
+    decoration: InputDecoration(
+      hintText: 'Email',
+      contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
+    ),
+  );
+
+  final password = TextFormField(
+    autofocus: false,
+    obscureText: true,
+    decoration: InputDecoration(
+      hintText: 'Password',
+      contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
+    ),
+  );
+
+  final loginButton = Padding(
+    padding: EdgeInsets.symmetric(vertical: 16.0),
+    child: RaisedButton(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(24),
+      ),
+      onPressed: () {},
+      padding: EdgeInsets.all(12),
+      color: Colors.lightBlueAccent,
+      child: Text('Log In', style: TextStyle(color: Colors.white)),
+    ),
+  );
+
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -49,7 +85,7 @@ class _HomeState extends State<HomePage> {
       child: new Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
-          title: Text('${widget.title}'),
+          title: Text('UR Lecturer Portal Login'),
           elevation: 5.5,
         ),
         body: !isOffline ? _body() : _loading(),
@@ -62,27 +98,15 @@ class _HomeState extends State<HomePage> {
     return Center(
       child: ListView(
         shrinkWrap: true,
-        padding: EdgeInsets.only(left: 140.0, right: 140.0),
+        padding: EdgeInsets.only(left: 24.0, right: 24.0),
         children: <Widget>[
-          new Button(
-            text: "New Application",
-            color: Colors.indigo[700],
-            callback: () {},
-          ),
-          const SizedBox(height: 30),
-          new Button(
-            text: "Students Portal",
-            color: Colors.blueGrey[700],
-            callback: () => Navigator.of(_scaffoldKey.currentContext)
-                .pushNamed(StudentLoginPage.routeName),
-          ),
-          const SizedBox(height: 30),
-          new Button(
-            text: "Lecturers Portal",
-            callback: () => Navigator.of(_scaffoldKey.currentContext)
-                .pushNamed(LecturerLoginPage.routeName),
-            color: Colors.lightGreen[700],
-          ),
+          logo,
+          SizedBox(height: 48.0),
+          email,
+          SizedBox(height: 8.0),
+          password,
+          SizedBox(height: 24.0),
+          loginButton,
         ],
       ),
     );

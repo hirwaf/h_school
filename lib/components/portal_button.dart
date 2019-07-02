@@ -12,24 +12,26 @@ class Button extends StatelessWidget {
   Widget build(BuildContext context) {
     // TODO: implement build
 
-    return RaisedButton(
+    return GestureDetector(
       child: ClipOval(
         child: Container(
-          margin: const EdgeInsets.symmetric(vertical: 5.0),
-          height: 140.0,
-          width: 140.0,
+          padding: const EdgeInsets.all(5.0),
+          height: 130.0,
+          width: 130.0,
           child: Center(
             child: Text(
               text,
-              style: TextStyle(fontSize: 20.0),
+              style: TextStyle(
+                  fontSize: 20.0,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w400),
+              textAlign: TextAlign.center,
             ),
           ),
-          color: color,
+          color: color ?? Colors.grey,
         ),
       ),
-      onPressed: callback,
-      padding: EdgeInsets.all(10),
-      elevation: 5.2,
+      onTap: callback,
     );
   }
 }
