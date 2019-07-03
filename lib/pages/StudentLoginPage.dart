@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hschool/components/portal_button.dart';
+import 'package:hschool/pages/StudentHomePage.dart';
 import 'package:hschool/utils/connectionStatusSingleton.dart';
 
 class StudentLoginPage extends StatefulWidget {
@@ -21,6 +22,8 @@ class _StudentLoginPageState extends State<StudentLoginPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   StreamSubscription _connectionChangeStream;
   bool isOffline = false;
+  TextEditingController studentIdController;
+  TextEditingController passwordController;
 
   @override
   initState() {
@@ -47,40 +50,6 @@ class _StudentLoginPageState extends State<StudentLoginPage> {
     ),
   );
 
-  final studentid = TextFormField(
-    keyboardType: TextInputType.number,
-    autofocus: true,
-    decoration: InputDecoration(
-      hintText: 'Student ID',
-      contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
-    ),
-  );
-
-  final password = TextFormField(
-    autofocus: false,
-    obscureText: true,
-    decoration: InputDecoration(
-      hintText: 'Password',
-      contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
-    ),
-  );
-
-  final loginButton = Padding(
-    padding: EdgeInsets.symmetric(vertical: 16.0),
-    child: RaisedButton(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(24),
-      ),
-      onPressed: () {},
-      padding: EdgeInsets.all(12),
-      color: Colors.lightBlueAccent,
-      child: Text('Log In', style: TextStyle(color: Colors.white)),
-    ),
-  );
-
-
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -106,11 +75,44 @@ class _StudentLoginPageState extends State<StudentLoginPage> {
         children: <Widget>[
           logo,
           SizedBox(height: 48.0),
-          studentid,
+          TextFormField(
+            keyboardType: TextInputType.number,
+            autofocus: true,
+            controller: studentIdController,
+            decoration: InputDecoration(
+              hintText: 'Student ID',
+              contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(32.0)),
+            ),
+          ),
           SizedBox(height: 8.0),
-          password,
+          TextFormField(
+            autofocus: false,
+            obscureText: true,
+            controller: passwordController,
+            decoration: InputDecoration(
+              hintText: 'Password',
+              contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(32.0)),
+            ),
+          ),
           SizedBox(height: 24.0),
-          loginButton,
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 16.0),
+            child: RaisedButton(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24),
+              ),
+              onPressed: () =>
+                  Navigator.of(_scaffoldKey.currentContext)
+                      .pushNamed(StudentHomePage.routeName),
+              padding: EdgeInsets.all(12),
+              color: Colors.lightBlueAccent,
+              child: Text('Log In', style: TextStyle(color: Colors.white)),
+            ),
+          ),
         ],
       ),
     );

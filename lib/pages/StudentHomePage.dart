@@ -4,24 +4,22 @@ import 'package:flutter/material.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hschool/components/portal_button.dart';
+import 'package:hschool/pages/LecturerLoginPage.dart';
+import 'package:hschool/pages/StudentLoginPage.dart';
+import 'package:hschool/routes.dart';
 import 'package:hschool/utils/connectionStatusSingleton.dart';
 
-import 'LecturerHomePage.dart';
-
-class LecturerLoginPage extends StatefulWidget {
-  static final String routeName = 'lecturerLogin';
+class StudentHomePage extends StatefulWidget {
+  static final String routeName = 'studentHome';
 
   @override
-  State<StatefulWidget> createState() => _LecturerLoginPageState();
+  State<StatefulWidget> createState() => _StudentHomeState();
 }
 
-class _LecturerLoginPageState extends State<LecturerLoginPage> {
+class _StudentHomeState extends State<StudentHomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   StreamSubscription _connectionChangeStream;
   bool isOffline = false;
-
-  TextEditingController emailController;
-  TextEditingController passwordController;
 
   @override
   initState() {
@@ -39,25 +37,34 @@ class _LecturerLoginPageState extends State<LecturerLoginPage> {
     });
   }
 
-  final logo = Hero(
-    tag: 'hero',
-    child: CircleAvatar(
-      backgroundColor: Colors.transparent,
-      radius: 48.0,
-      child: Image.asset('assets/images/logo.png'),
-    ),
-  );
-
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
+
+    var _user;
 
     return SafeArea(
       child: new Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
-          title: Text('UR Lecturer Portal Login'),
+          title: Text('UR Student'),
           elevation: 5.5,
+          actions: <Widget>[
+            Container(
+              padding: const EdgeInsets.fromLTRB(0.0, 20.0, 5.0, 5.0),
+              child: Text(
+                _user != null ? _user.name : "216238994",
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              ),
+            ),
+            IconButton(
+              icon: const Icon(Icons.exit_to_app),
+              onPressed: _logout,
+              tooltip: 'Logout',
+            ),
+          ],
         ),
         body: !isOffline ? _body() : _loading(),
         backgroundColor: Color.fromRGBO(250, 250, 250, 1),
@@ -65,50 +72,31 @@ class _LecturerLoginPageState extends State<LecturerLoginPage> {
     );
   }
 
+  void _logout() {
+
+  }
+
   Widget _body() {
     return Center(
       child: ListView(
         shrinkWrap: true,
-        padding: EdgeInsets.only(left: 24.0, right: 24.0),
+        padding: EdgeInsets.only(left: 140.0, right: 140.0),
         children: <Widget>[
-          logo,
-          SizedBox(height: 48.0),
-          TextFormField(
-            keyboardType: TextInputType.emailAddress,
-            autofocus: true,
-            controller: emailController,
-            decoration: InputDecoration(
-              hintText: 'Email',
-              contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-              border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
-            ),
+          new Button(
+            text: "Notifications",
+            color: const Color.fromRGBO(0, 110, 183, 1),
+            callback: () {},
           ),
-          SizedBox(height: 8.0),
-          TextFormField(
-            autofocus: false,
-            obscureText: true,
-            controller: passwordController,
-            decoration: InputDecoration(
-              hintText: 'Password',
-              contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-              border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
-            ),
+          const SizedBox(height: 30),
+          new Button(
+            text: "Reports",
+            color: const Color.fromRGBO(0, 59, 79, 1),
+            callback: () {},
           ),
-          SizedBox(height: 24.0),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 16.0),
-            child: RaisedButton(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(24),
-              ),
-              onPressed: () => Navigator.of(_scaffoldKey.currentContext)
-                  .pushNamed(LecturerHomePage.routeName),
-              padding: EdgeInsets.all(12),
-              color: Colors.lightBlueAccent,
-              child: Text('Log In', style: TextStyle(color: Colors.white)),
-            ),
+          const SizedBox(height: 30),
+          new Button(
+            text: "My Information",
+            callback: () {},
           ),
         ],
       ),
