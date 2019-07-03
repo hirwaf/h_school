@@ -9,14 +9,14 @@ import 'package:hschool/pages/StudentLoginPage.dart';
 import 'package:hschool/routes.dart';
 import 'package:hschool/utils/connectionStatusSingleton.dart';
 
-class LecturerHomePage extends StatefulWidget {
-  static final String routeName = 'lecturerHome';
+class StudentListPage extends StatefulWidget {
+  static final String routeName = 'studentList';
 
   @override
-  State<StatefulWidget> createState() => _LecturerHomeState();
+  State<StatefulWidget> createState() => _StudentListState();
 }
 
-class _LecturerHomeState extends State<LecturerHomePage> {
+class _StudentListState extends State<StudentListPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   StreamSubscription _connectionChangeStream;
   bool isOffline = false;
