@@ -1,12 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:connectivity/connectivity.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:hschool/components/portal_button.dart';
-import 'package:hschool/pages/LecturerLoginPage.dart';
-import 'package:hschool/pages/StudentLoginPage.dart';
-import 'package:hschool/routes.dart';
+import 'package:hschool/models/Course.dart';
+import 'package:hschool/pages/StudentListPage.dart';
 import 'package:hschool/utils/connectionStatusSingleton.dart';
 
 class LecturerHomePage extends StatefulWidget {
@@ -74,11 +71,11 @@ class _LecturerHomeState extends State<LecturerHomePage> {
 
   void _logout() {}
 
-  List<dynamic> _course_list() {
-    List<String> courses = [
-      'Information System',
-      'IS Project Management',
-      'IS Security'
+  List<Course> _courseList() {
+    List<Course> courses = [
+      new Course(name: 'Information System', department: 'Information Systems', year: 'Y4'),
+      new Course(name: 'IS Project Management', department: 'Information Systems', year: 'Y4'),
+      new Course(name: 'IS Security', department: 'Information Systems', year: 'Y4'),
     ];
     return courses;
   }
@@ -107,7 +104,7 @@ class _LecturerHomeState extends State<LecturerHomePage> {
               Icon(Icons.keyboard_arrow_right, color: Colors.white, size: 30.0),
         );
 
-    final makeCard = (String course, String department) => Card(
+    final makeCard = (Course course) => Card(
           elevation: 8.0,
           margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
           child: Container(
@@ -116,13 +113,11 @@ class _LecturerHomeState extends State<LecturerHomePage> {
                 borderRadius: BorderRadius.all(Radius.circular(5))),
             child: GestureDetector(
               onTap: () {
-                _scaffoldKey.currentState.showSnackBar(
-                  new SnackBar(
-                    content: new Text(course),
-                  ),
-                );
+                Navigator.pushNamed(
+                    _scaffoldKey.currentContext, StudentListPage.routeName,
+                    arguments: course);
               },
-              child: makeListTile(course, department),
+              child: makeListTile(course.name, course.department),
             ),
           ),
         );
@@ -146,10 +141,11 @@ class _LecturerHomeState extends State<LecturerHomePage> {
           child: ListView.builder(
             scrollDirection: Axis.vertical,
             shrinkWrap: true,
-            itemCount: _course_list().length,
+            itemCount: _courseList().length,
             itemBuilder: (BuildContext context, int index) {
               return makeCard(
-                  _course_list()[index], "Information Systems | Y4");
+                _courseList()[index]
+              );
             },
           ),
         )

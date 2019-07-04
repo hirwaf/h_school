@@ -1,12 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:connectivity/connectivity.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:hschool/components/portal_button.dart';
-import 'package:hschool/pages/LecturerLoginPage.dart';
-import 'package:hschool/pages/StudentLoginPage.dart';
-import 'package:hschool/routes.dart';
+import 'package:hschool/models/Course.dart';
+import 'package:hschool/models/Student.dart';
 import 'package:hschool/utils/connectionStatusSingleton.dart';
 
 class StudentListPage extends StatefulWidget {
@@ -42,22 +39,42 @@ class _StudentListState extends State<StudentListPage> {
     // TODO: implement build
 
     var _user;
+    Course course = ModalRoute.of(context).settings.arguments;
 
     return SafeArea(
       child: new Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
-          title: Text('UR Lecturer'),
+          title: Text(course.name),
           elevation: 5.5,
           actions: <Widget>[
-            Container(
-              padding: const EdgeInsets.fromLTRB(0.0, 20.0, 5.0, 5.0),
-              child: Text(
-                _user != null ? _user.name : "Hirwa Felix",
-                textAlign: TextAlign.center,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            GestureDetector(
+              onTap: () {},
+              child: IconButton(
+                icon: const Icon(Icons.av_timer),
+                onPressed: () {
+                  _scaffoldKey.currentState.showSnackBar(
+                    new SnackBar(
+                      content: new Text(
+                        "Attendance of ${course.department} ${course.year}",
+                      ),
+                    ),
+                  );
+                },
+                tooltip: 'Student Attendance',
               ),
+            ),
+            IconButton(
+              icon: const Icon(Icons.near_me),
+              onPressed: () {
+                _scaffoldKey.currentState.showSnackBar(
+                  new SnackBar(
+                    content: new Text(
+                        "Send Message to all students of ${course.department} ${course.year}"),
+                  ),
+                );
+              },
+              tooltip: 'Send notification',
             ),
             IconButton(
               icon: const Icon(Icons.exit_to_app),
@@ -66,7 +83,7 @@ class _StudentListState extends State<StudentListPage> {
             ),
           ],
         ),
-        body: !isOffline ? _body() : _loading(),
+        body: !isOffline ? _body(course) : _loading(),
         backgroundColor: Color.fromRGBO(250, 250, 250, 1),
       ),
     );
@@ -74,55 +91,70 @@ class _StudentListState extends State<StudentListPage> {
 
   void _logout() {}
 
-  List<dynamic> _course_list() {
-    List<String> courses = [
-      'Information System',
-      'IS Project Management',
-      'IS Security'
+  List<Student> _students_list() {
+    List<Student> students = [
+      new Student(
+        name: 'MDASIRU Elphaz',
+        id: "216247554",
+        department: 'Information Sytems',
+        year: 'Y4',
+      ),
+      new Student(
+        name: 'NISHIMWE Theodosie',
+        id: "216138364",
+        department: 'Information Sytems',
+        year: 'Y4',
+      ),
+      new Student(
+        name: 'HIRWA Felix',
+        id: "216238994",
+        department: 'Information Sytems',
+        year: 'Y4',
+      ),
     ];
-    return courses;
+    return students;
   }
 
-  Widget _body() {
-    final makeListTile = (String course, String department) => ListTile(
+  Widget _body(Course course) {
+    final makeListTile = (String name, String id) => ListTile(
           contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
           leading: Container(
             padding: EdgeInsets.only(right: 10.0, top: 7.0),
-            child: Icon(Icons.stars, color: Colors.white24),
+            child: Icon(Icons.school, color: Colors.white24),
           ),
           title: Text(
-            course,
+            name,
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
           // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
 
           subtitle: Row(
             children: <Widget>[
-              Icon(Icons.linear_scale, color: Colors.blueAccent[100]),
+              Icon(Icons.arrow_right, color: Colors.blueAccent[100]),
               SizedBox(width: 10.0),
-              Text(department, style: TextStyle(color: Colors.white))
+              Text(id, style: TextStyle(color: Colors.white))
             ],
           ),
-          trailing:
-              Icon(Icons.keyboard_arrow_right, color: Colors.white, size: 30.0),
+          trailing: Icon(Icons.message, color: Colors.white, size: 30.0),
         );
 
-    final makeCard = (String course, String department) => Card(
+    final makeCard = (String name, String id) => Card(
           elevation: 8.0,
           margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
           child: Container(
             decoration: BoxDecoration(
-                color: Color.fromRGBO(64, 75, 96, .9),
-                borderRadius: BorderRadius.all(Radius.circular(5))),
+              color: Color.fromRGBO(64, 75, 96, .9),
+              borderRadius: BorderRadius.all(Radius.circular(5)),
+            ),
             child: GestureDetector(
               onTap: () {
                 _scaffoldKey.currentState.showSnackBar(
                   new SnackBar(
-                    content: new Text(course),
+                    content: new Text("$name - $id"),
                   ),
                 );
               },
-              child: makeListTile(course, department),
+              child: makeListTile(name, id),
             ),
           ),
         );
@@ -137,7 +169,7 @@ class _StudentListState extends State<StudentListPage> {
             color: const Color.fromRGBO(6, 5, 24, 1),
           ),
           child: Text(
-            "Available Courses",
+            "Students list of ${course.year}",
             textAlign: TextAlign.center,
             style: TextStyle(fontWeight: FontWeight.w400, color: Colors.white),
           ),
@@ -146,10 +178,12 @@ class _StudentListState extends State<StudentListPage> {
           child: ListView.builder(
             scrollDirection: Axis.vertical,
             shrinkWrap: true,
-            itemCount: _course_list().length,
+            itemCount: _students_list().length,
             itemBuilder: (BuildContext context, int index) {
               return makeCard(
-                  _course_list()[index], "Information Systems | Y4");
+                _students_list()[index].name,
+                _students_list()[index].id,
+              );
             },
           ),
         )

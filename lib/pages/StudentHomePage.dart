@@ -84,18 +84,25 @@ class _StudentHomeState extends State<StudentHomePage> {
         children: <Widget>[
           new Button(
             text: "Notifications",
-            color: const Color.fromRGBO(0, 110, 183, 1),
+            color: const Color.fromRGBO( 155, 209, 133, 1),
             callback: () {},
           ),
           const SizedBox(height: 30),
           new Button(
             text: "Reports",
-            color: const Color.fromRGBO(0, 59, 79, 1),
+            color: const Color.fromRGBO(250, 121, 33, 1),
+            callback: () {},
+          ),
+          const SizedBox(height: 30),
+          new Button(
+            text: "Register",
+            color: const Color.fromRGBO(50, 51, 141, 1),
             callback: () {},
           ),
           const SizedBox(height: 30),
           new Button(
             text: "My Information",
+            color: const Color.fromRGBO(248, 51, 60, 1),
             callback: () {},
           ),
         ],

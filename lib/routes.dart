@@ -3,6 +3,7 @@ import 'package:hschool/pages/HomePage.dart';
 import 'package:hschool/pages/LecturerHomePage.dart';
 import 'package:hschool/pages/LecturerLoginPage.dart';
 import 'package:hschool/pages/StudentHomePage.dart';
+import 'package:hschool/pages/StudentListPage.dart';
 import 'package:hschool/pages/StudentLoginPage.dart';
 
 final routes = {
@@ -11,4 +12,5 @@ final routes = {
   StudentHomePage.routeName : (BuildContext context) => new StudentHomePage(),
   LecturerLoginPage.routeName : (BuildContext context) => new LecturerLoginPage(),
   LecturerHomePage.routeName : (BuildContext context) => new LecturerHomePage(),
+  StudentListPage.routeName: (BuildContext context) => new StudentListPage(),
 };
