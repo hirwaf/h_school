@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hschool/components/student_web_view.dart';
 import 'package:hschool/pages/HomePage.dart';
 import 'package:hschool/pages/LecturerHomePage.dart';
 import 'package:hschool/pages/LecturerLoginPage.dart';
@@ -31,4 +32,8 @@ final routes = {
           ),
         ),
       ),
+  'studentNotification': (BuildContext context) => new StudentWebViewContainer(),
+  'studentReports': (BuildContext context) => new StudentWebViewContainer(),
+  'studentRegister': (BuildContext context) => new StudentWebViewContainer(),
+  'studentInformation': (BuildContext context) => new StudentWebViewContainer(),
 };

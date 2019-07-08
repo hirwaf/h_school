@@ -5,7 +5,10 @@ import 'package:connectivity/connectivity.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hschool/components/portal_button.dart';
 import 'package:hschool/pages/StudentHomePage.dart';
+import 'package:hschool/utils/auth_utils.dart';
 import 'package:hschool/utils/connectionStatusSingleton.dart';
+import 'package:hschool/utils/network_utils.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class StudentLoginPage extends StatefulWidget {
   static final String routeName = 'studentLogin';
@@ -22,17 +25,89 @@ class _StudentLoginPageState extends State<StudentLoginPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   StreamSubscription _connectionChangeStream;
   bool isOffline = false;
+  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   TextEditingController studentIdController;
   TextEditingController passwordController;
+  SharedPreferences _sharedPreferences;
+  bool _isLoading = false;
 
   @override
   initState() {
     super.initState();
-
+    _fetchSessionAndNavigate();
     ConnectionStatusSingleton connectionStatus =
-    ConnectionStatusSingleton.getInstance();
+        ConnectionStatusSingleton.getInstance();
     _connectionChangeStream =
         connectionStatus.connectionChange.listen(connectionChanged);
+    studentIdController = new TextEditingController();
+    passwordController = new TextEditingController();
+  }
+
+  _fetchSessionAndNavigate() async {
+    _sharedPreferences = await _prefs;
+    String authToken = AuthUtils.getToken(_sharedPreferences);
+    if (authToken != null) {
+      Navigator.of(_scaffoldKey.currentContext)
+          .pushReplacementNamed(StudentHomePage.routeName);
+    }
+  }
+
+  _showLoading() {
+    setState(() {
+      _isLoading = true;
+    });
+  }
+
+  _hideLoading() {
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  _authenticateUser() async {
+    _showLoading();
+    if (_valid()) {
+      var responseJson = await NetworkUtils.authenticateStudent(
+          studentIdController.text, passwordController.text);
+
+      if (responseJson == null) {
+        print(responseJson);
+        NetworkUtils.showSnackBar(_scaffoldKey, 'Something went wrong!');
+      } else if (responseJson == 'NetworkError') {
+        NetworkUtils.showSnackBar(_scaffoldKey, null);
+      } else if (responseJson['errors'] != null) {
+        NetworkUtils.showSnackBar(_scaffoldKey, 'Invalid Email/Password');
+      } else if (responseJson['message'] != null) {
+        NetworkUtils.showSnackBar(_scaffoldKey, responseJson['message']);
+      } else {
+        AuthUtils.insertDetails(_sharedPreferences, responseJson);
+        /**
+         * Removes stack and start with the new page.
+         * In this case on press back on HomePage app will exit.
+         * **/
+        Navigator.of(_scaffoldKey.currentContext)
+            .pushReplacementNamed(StudentHomePage.routeName);
+      }
+      _hideLoading();
+    } else {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  _valid() {
+    bool valid = true;
+
+    if (studentIdController.text.isEmpty) {
+      valid = false;
+    }
+
+    if (passwordController.text.isEmpty) {
+      valid = false;
+    }
+
+    return valid;
   }
 
   void connectionChanged(dynamic hasConnection) {
@@ -61,7 +136,13 @@ class _StudentLoginPageState extends State<StudentLoginPage> {
           title: Text('UR Students Portal Login'),
           elevation: 5.5,
         ),
-        body: !isOffline ? _body() : _loading(),
+        body: !isOffline
+            ? _isLoading
+                ? Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : _body()
+            : _loading(),
         backgroundColor: Color.fromRGBO(250, 250, 250, 1),
       ),
     );
@@ -82,8 +163,8 @@ class _StudentLoginPageState extends State<StudentLoginPage> {
             decoration: InputDecoration(
               hintText: 'Student ID',
               contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-              border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(32.0)),
+              border:
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
             ),
           ),
           SizedBox(height: 8.0),
@@ -94,8 +175,8 @@ class _StudentLoginPageState extends State<StudentLoginPage> {
             decoration: InputDecoration(
               hintText: 'Password',
               contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-              border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(32.0)),
+              border:
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
             ),
           ),
           SizedBox(height: 24.0),
@@ -105,9 +186,7 @@ class _StudentLoginPageState extends State<StudentLoginPage> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(24),
               ),
-              onPressed: () =>
-                  Navigator.of(_scaffoldKey.currentContext)
-                      .pushNamed(StudentHomePage.routeName),
+              onPressed: _authenticateUser,
               padding: EdgeInsets.all(12),
               color: Colors.lightBlueAccent,
               child: Text('Log In', style: TextStyle(color: Colors.white)),
