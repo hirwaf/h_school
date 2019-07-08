@@ -67,7 +67,8 @@ class _HomeState extends State<HomePage> {
           new Button(
             text: "New Application",
             color: Colors.indigo[700],
-            callback: () {},
+            callback: () => Navigator.of(_scaffoldKey.currentContext)
+                .pushNamed('/application'),
           ),
           const SizedBox(height: 30),
           new Button(
