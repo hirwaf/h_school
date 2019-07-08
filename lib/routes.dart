@@ -24,7 +24,6 @@ final routes = {
         withZoom: true,
         withLocalStorage: true,
         hidden: true,
-        withJavascript: ,
         initialChild: Container(
           color: Colors.transparent,
           child: const Center(
