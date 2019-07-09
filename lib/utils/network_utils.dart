@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:hschool/models/Lecturer.dart';
 import 'package:hschool/models/Student.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -60,31 +61,84 @@ class NetworkUtils {
     } catch (exception) {
       print(exception);
       if (exception.toString().contains('SocketException')) {
-    return 'NetworkError';
-    } else {
-    return null;
+        return 'NetworkError';
+      } else {
+        return null;
+      }
     }
   }
-}
 
-static fetchStudentUser(var authToken) async {
-  var uri = host + '/api/v1/auth/student/user';
+  static fetchStudentUser(var authToken) async {
+    var uri = host + '/api/v1/auth/student/user';
 
-  try {
-    final response = await http.get(
-      uri,
-      headers: {'Authorization': authToken},
-    );
+    try {
+      final response = await http.get(
+        uri,
+        headers: {'Authorization': authToken},
+      );
 
-    if (response.statusCode == 200) {
-      // If server returns an OK response, parse the JSON
-      print(response.body);
-      return Student.fromJson(json.decode(response.body));
-
-    } else {
-      return false;
+      if (response.statusCode == 200) {
+        // If server returns an OK response, parse the JSON
+        print(response.body);
+        return Student.fromJson(json.decode(response.body));
+      } else {
+        return false;
+      }
+    } catch (exception) {
+      print(exception);
+      if (exception.toString().contains('SocketException')) {
+        return 'NetworkError';
+      } else {
+        return null;
+      }
     }
-  } catch (exception) {
+  }
+
+  static dynamic authenticateLecturer(String email, String password) async {
+    var uri = host + AuthUtils.endPoint + "lecturer/login";
+
+    try {
+      final response =
+          await http.post(uri, body: {'email': email, 'password': password});
+      final responseJson = json.decode(response.body);
+      return responseJson;
+    } catch (exception) {
+      print(exception);
+      if (exception.toString().contains('SocketException')) {
+        return 'NetworkError';
+      } else {
+        return null;
+      }
+    }
+  }
+
+  static logoutLecturerUser(BuildContext context, SharedPreferences prefs) {
+    String authToken = AuthUtils.getAuthorization(prefs);
+
+    prefs.setString(AuthUtils.authTokenKey, null);
+    prefs.setString(AuthUtils.tokenType, null);
+
+    fetch(authToken, '/api/v1/auth/logout/logout');
+
+    Navigator.of(context).pushReplacementNamed('/');
+  }
+
+  static fetchLecturerUser(var authToken) async {
+    var uri = host + '/api/v1/auth/lecturer/user';
+
+    try {
+      final response = await http.get(
+        uri,
+        headers: {'Authorization': authToken},
+      );
+
+      if (response.statusCode == 200) {
+        // If server returns an OK response, parse the JSON
+        return Lecturer.fromJson(json.decode(response.body));
+      } else {
+        return false;
+      }
+    } catch (exception) {
       print(exception);
       if (exception.toString().contains('SocketException')) {
         return 'NetworkError';
