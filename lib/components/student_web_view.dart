@@ -98,7 +98,7 @@ class _WebViewContainerState extends State<StudentWebViewContainer> {
         .arguments;
     if (!_isLoading && _user != null) {
       var _url = NetworkUtils.host + "/api/v1/app/student/${_user.id}/$args?_key=JM8bHNyYKJEtCx";
-      return _getWebPage(_url, args);
+      return _getWebPage(_url, args, _authToken);
     }
     else {
       return SafeArea(
@@ -133,10 +133,13 @@ class _WebViewContainerState extends State<StudentWebViewContainer> {
 
   }
 
-  Widget _getWebPage(var _url, var args) {
+  Widget _getWebPage(var _url, var args, var authToken) {
     return WebviewScaffold(
       key: _key,
       url: _url,
+      headers: {
+        'Authorization': authToken
+      },
       appBar: new AppBar(
           title: new Text('${args.toString().toUpperCase()}'),
           elevation: 5.5,
@@ -158,8 +161,9 @@ class _WebViewContainerState extends State<StudentWebViewContainer> {
             ),
           ]
       ),
-      withZoom: true,
+      withZoom: false,
       withLocalStorage: true,
+      withJavascript: true,
       hidden: true,
       initialChild: Container(
         color: Colors.transparent,
