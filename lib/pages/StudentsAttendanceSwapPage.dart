@@ -7,7 +7,7 @@ import 'package:hschool/models/Student.dart';
 import 'package:hschool/utils/connectionStatusSingleton.dart';
 import 'package:hschool/utils/network_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_blue/flutter_blue.dart';
+import 'package:intl/intl.dart';
 
 class StudentsAttendanceSwapPage extends StatefulWidget {
   static final String routeName = 'studentList';
@@ -59,6 +59,47 @@ class _StudentListState extends State<StudentsAttendanceSwapPage> {
   _logout() {
     NetworkUtils.logoutStudentUser(
         _scaffoldKey.currentContext, _sharedPreferences);
+  }
+
+  void deleteItem(index) {
+    /*
+    By implementing this method, it ensures that upon being dismissed from our widget tree,
+    the item is removed from our list of items and our list is updated, hence
+    preventing the "Dismissed widget still in widget tree error" when we reload.
+    */
+    setState(() {
+      _list_students.removeAt(index);
+    });
+  }
+
+  void undoDeletion(index, item) {
+    /*
+    This method accepts the parameters index and item and re-inserts the {item} at
+    index {index}
+    */
+    setState(() {
+      _list_students.insert(index, item);
+    });
+  }
+
+  Widget stackBehindDismiss(var date) {
+    return Container(
+      alignment: Alignment.centerRight,
+      padding: EdgeInsets.only(right: 20.0),
+      color: Colors.green,
+      child: Row(
+        children: <Widget>[
+          Icon(
+            Icons.sentiment_very_satisfied,
+            color: Colors.white,
+          ),
+          SizedBox(
+            width: 10.0,
+          ),
+          Text("$date")
+        ],
+      ),
+    );
   }
 
   @override
@@ -119,6 +160,9 @@ class _StudentListState extends State<StudentsAttendanceSwapPage> {
           ),
         );
 
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat('yyyy-MM-d kk:mm:ss').format(now);
+
     return _isLoading
         ? Center(
             child: CircularProgressIndicator(),
@@ -158,6 +202,7 @@ class _StudentListState extends State<StudentsAttendanceSwapPage> {
                         itemCount: _list_students.length,
                         itemBuilder: (BuildContext context, int index) {
                           return Dismissible(
+                            background: stackBehindDismiss(formattedDate),
                             key: ObjectKey(_list_students[index]),
                             child: makeCard(
                               _list_students[index].name,
@@ -165,9 +210,18 @@ class _StudentListState extends State<StudentsAttendanceSwapPage> {
                             ),
                             onDismissed: (direction) {
                               var student = _list_students.elementAt(index);
+                              var item = _list_students[index];
+                              deleteItem(index);
                               _scaffoldKey.currentState.showSnackBar(
                                 new SnackBar(
-                                  content: new Text(student.name),
+                                  content: new Text("${student.name}"),
+                                  action: SnackBarAction(
+                                    label: "UNDO",
+                                    onPressed: () {
+                                      //To undo deletion
+                                      undoDeletion(index, item);
+                                    },
+                                  ),
                                 ),
                               );
                             },
