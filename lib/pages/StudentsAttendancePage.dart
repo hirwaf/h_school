@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hschool/models/Course.dart';
 import 'package:hschool/models/Student.dart';
-import 'package:hschool/utils/auth_utils.dart';
 import 'package:hschool/utils/connectionStatusSingleton.dart';
 import 'package:hschool/utils/network_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_blue/flutter_blue.dart';
 
 class StudentsAttendancePage extends StatefulWidget {
   static final String routeName = 'studentList';
@@ -30,13 +30,14 @@ class _StudentListState extends State<StudentsAttendancePage> {
   final List<Student> students;
   final dynamic token;
   StreamSubscription _connectionChangeStream;
+  var scanSubscription;
   bool isOffline = false;
-  bool _isLoading = false;
-  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-  var _user;
+  bool _isLoading = true;
   SharedPreferences _sharedPreferences;
   var _authToken;
   var _list_students;
+  dynamic _device;
+  FlutterBlue flutterBlue = FlutterBlue.instance;
 
   _StudentListState(this.course, this.students, this.token);
 
@@ -49,6 +50,20 @@ class _StudentListState extends State<StudentsAttendancePage> {
         ConnectionStatusSingleton.getInstance();
     _connectionChangeStream =
         connectionStatus.connectionChange.listen(connectionChanged);
+
+    /// Start scanning
+    _searchDevice();
+  }
+
+  _searchDevice() async {
+    scanSubscription = flutterBlue.scan().listen((scanResult) {
+      // do something with scan result
+      setState(() {
+          _device = scanResult.device;
+          _isLoading = false;
+      });
+      print('${_device.name} found! rssi: ${scanResult.rssi}');
+    });
   }
 
   void connectionChanged(dynamic hasConnection) {
@@ -57,28 +72,31 @@ class _StudentListState extends State<StudentsAttendancePage> {
     });
   }
 
-  _showLoading() {
-    setState(() {
-      _isLoading = true;
-    });
-  }
-
-  _hideLoading() {
-    setState(() {
-      _isLoading = false;
-    });
-  }
-
   _logout() {
     NetworkUtils.logoutStudentUser(
         _scaffoldKey.currentContext, _sharedPreferences);
   }
-
+  _con() async {
+    await _device.connect();
+    List<BluetoothService> services = await _device.discoverServices();
+    services.forEach((service) async {
+      // Reads all characteristics
+      var characteristics = service.characteristics;
+      for(BluetoothCharacteristic c in characteristics) {
+        c.setNotifyValue(true);
+        c.value.listen((value) {
+          print('Testing Characteristes');
+        });
+      }
+    });
+  }
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
 
-    var _user;
+    if(_device != null) {
+      _con();
+    }
 
     return SafeArea(
       child: new Scaffold(
@@ -134,7 +152,7 @@ class _StudentListState extends State<StudentsAttendancePage> {
           ),
         );
 
-    return _isLoading
+    return _isLoading && _device == null
         ? Center(
             child: CircularProgressIndicator(),
           )

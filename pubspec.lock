@@ -78,11 +78,25 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.2"
+  fixnum:
+    dependency: transitive
+    description:
+      name: fixnum
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.10.9"
   flutter:
     dependency: "direct main"
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_blue:
+    dependency: "direct main"
+    description:
+      name: flutter_blue
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.6.0+1"
   flutter_colorpicker:
     dependency: "direct main"
     description:
@@ -186,6 +200,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.2.1"
+  protobuf:
+    dependency: transitive
+    description:
+      name: protobuf
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.13.14"
   quiver:
     dependency: transitive
     description:
@@ -193,6 +214,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.2"
+  rxdart:
+    dependency: transitive
+    description:
+      name: rxdart
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.22.0"
   shared_preferences:
     dependency: "direct main"
     description:
